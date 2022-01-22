@@ -1,48 +1,58 @@
-import React from 'react'
+import React, {useState, useEffect, useCallback} from 'react'
 import defaultDataset from './dataset'
 import './assets/styles/style.css'
 import { AnswersList, Chats } from './components/index'
 import FormDialog from './components/Forms/FormDialog'
 
-export default class App extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-          answers: [],
-          chats: [],
-          currentId: "init",
-          dataset: defaultDataset,
-          open: false
-        }
-        this.selectAnswer = this.selectAnswer.bind(this)
-        this.handleClickOpen = this.handleClickOpen.bind(this)
-        this.handleClose = this.handleClose.bind(this)
-    }
+const App = () => {
+  const [answers, setAnswers] = useState([])
+  const [chats, setChats] = useState([])
+  const [currentId, setCurrentId] = useState('init')
+  const [dataset] = useState(defaultDataset)
+  // firebaseでデプロイした場合は必要
+  // const [dataset, setDataset] = useState({})
+  const [open, setOpen] = useState(false)
 
-  displayNextQuestion = (nextQuestionId) => {
-    const chats = this.state.chats
-    chats.push({
-      text: this.state.dataset[nextQuestionId].question,
-      type: 'question'
-    })
-
-    this.setState({
-      answers: this.state.dataset[nextQuestionId].answers,
-      chats: chats,
-      currentId: nextQuestionId
+  // 新しいチャットを追加するCallback関数
+  const addChats = (chat) => {
+    setChats(prevChats => {
+      return [...prevChats, chat]
     })
   }
 
-  selectAnswer = (selectedAnswer, nextQuestionId) => {
+  // 問い合わせフォーム用モーダルを開くCallback関数
+  const handleClickOpen = () => {
+    setOpen(true)
+  };
+
+  // 問い合わせフォーム用モーダルを閉じるCallback関数
+  const handleClose = useCallback(() => {
+    setOpen(false)
+  }, [setOpen]);
+
+  // 津フィの質問をチャットエリアに表示する関数
+  const displayNextQuestion = (nextQuestionId, nextDataset) => {
+    // 選択された回答と次の質問をチャットに追加
+    addChats({
+      text: nextDataset.question,
+      type: 'question'
+    })
+      // 次の回答一覧をセット
+      setAnswers(nextDataset.answers)
+
+      // 現在の質問IDをセット
+      setCurrentId(nextQuestionId)
+    }
+
+  // 回答が選択されたときに呼ばれる関数
+  const selectAnswer = useCallback((selectedAnswer, nextQuestionId) => {
     switch (true) {
-      case (nextQuestionId === 'init'):
-        setTimeout(() => this.displayNextQuestion(nextQuestionId), 500)
-        break;
-
+      // お問い合わせが選択された場合
       case (nextQuestionId === 'contact'):
-        this.handleClickOpen()
+        handleClickOpen()
         break;
 
+      // リンクが選択された場合
       case (/^https:*/.test(nextQuestionId)):
         const a = document.createElement('a')
         a.href = nextQuestionId
@@ -50,51 +60,43 @@ export default class App extends React.Component {
         a.click()
         break;
 
+      // 選択された回答をchatsに追加
       default:
-        const chats = this.state.chats
-        chats.push({
+        // 現在のチャット一覧を取得
+        addChats({
           text: selectedAnswer,
           type: 'answer'
         })
 
-        this.setState({
-          answers: chats
-        })
-
-        setTimeout(() => this.displayNextQuestion(nextQuestionId), 500)
+        setTimeout(() => displayNextQuestion(nextQuestionId, dataset[nextQuestionId]), 750)
         break;
     }
-  }
+  },[answers])
 
-  handleClickOpen = () => {
-    this.setState({ open: true })
-  };
+  // 最初の質問をチャットエリアに表示する
+  useEffect(() => {
+      // firebaseを使用する場合、追記が必要
 
-  handleClose = () => {
-    this.setState({ open: false })
-  };
+    displayNextQuestion(currentId, dataset[currentId])
+  },[])
 
-  componentDidMount() {
-    const initAnswer = ""
-    this.selectAnswer(initAnswer, this.state.currentId)
-  }
-
-  componentDidUpdate() {
+  // 最新のチャットが見えるように、スクロールの1を頂点をスクロール領域の最下部に設定する
+  useEffect(() => {
     const scrollArea = document.getElementById('scroll-area')
     if (scrollArea) {
       scrollArea.scrollTop = scrollArea.scrollHeight
     }
-  }
+  })
 
-  render() {
-      return (
-        <section className="c-section">
-          <div className='c-box'>
-            <Chats chats={this.state.chats} />
-            <AnswersList answers={this.state.answers} select={this.selectAnswer} />
-            <FormDialog open={this.state.open} handleClose={this.handleClose} />
-          </div>
-        </section>
-      );
-  }
+  return (
+    <section className="c-section">
+      <div className='c-box'>
+        <Chats chats={chats} />
+        <AnswersList answers={answers} select={selectAnswer} />
+        <FormDialog open={open} handleClose={handleClose} />
+      </div>
+    </section>
+  );
 }
+
+export default App
