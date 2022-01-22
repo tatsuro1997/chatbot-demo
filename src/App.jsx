@@ -2,7 +2,8 @@ import React, {useState, useEffect, useCallback} from 'react'
 import defaultDataset from './dataset'
 import './assets/styles/style.css'
 import { AnswersList, Chats, Loading } from './components/index'
-import FormDialog from './components/Forms/FormDialog'
+import { FormDialog } from "./components/Forms/index";
+
 
 const App = () => {
   const [answers, setAnswers] = useState([])
