@@ -3,7 +3,6 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextInput from './TextInput';
 
@@ -83,21 +82,19 @@ const FormDialog = (props) => {
             <DialogTitle id="alert-dialog-title">
                 お問い合わせフォーム
             </DialogTitle>
-            <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                        <TextInput
-                            label={"お名前（必須）"} multiline={false} rows={1}
-                            value={name} type={"txst"} onChange={inputName}
-                        />
-                        <TextInput
-                            label={"メールアドレス（必須）"} multiline={false} rows={1}
-                            value={email} type={"email"} onChange={inputEmail}
-                        />
-                        <TextInput
-                            label={"お問い合わせ内容（必須）"} multiline={true} rows={5}
-                            value={description} type={"text"} onChange={inputDescription}
-                        />
-                </DialogContentText>
+            <DialogContent id="alert-dialog-description">
+                <TextInput
+                    label={"お名前（必須）"} multiline={false} rows={1}
+                    value={name} type={"txst"} onChange={inputName}
+                />
+                <TextInput
+                    label={"メールアドレス（必須）"} multiline={false} rows={1}
+                    value={email} type={"email"} onChange={inputEmail}
+                />
+                <TextInput
+                    label={"お問い合わせ内容（必須）"} multiline={true} rows={5}
+                    value={description} type={"text"} onChange={inputDescription}
+                />
             </DialogContent>
             <DialogActions>
                 <Button onClick={props.handleClose}>キャンセル</Button>
