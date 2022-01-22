@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useCallback} from 'react'
 import defaultDataset from './dataset'
 import './assets/styles/style.css'
-import { AnswersList, Chats } from './components/index'
+import { AnswersList, Chats, Loading } from './components/index'
 import FormDialog from './components/Forms/FormDialog'
 
 const App = () => {
@@ -91,8 +91,14 @@ const App = () => {
   return (
     <section className="c-section">
       <div className='c-box'>
-        <Chats chats={chats} />
-        <AnswersList answers={answers} select={selectAnswer} />
+        {(Object.keys(dataset).length === 0) ? (
+          <Loading />
+        ) : (
+          <>
+            <Chats chats={chats} />
+            <AnswersList answers={answers} select={selectAnswer} />
+          </>
+        )}
         <FormDialog open={open} handleClose={handleClose} />
       </div>
     </section>
