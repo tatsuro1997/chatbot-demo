@@ -71,21 +71,19 @@ export default class FormDialog extends React.Component {
             <DialogTitle id="alert-dialog-title">
                 お問い合わせフォーム
             </DialogTitle>
-            <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                        <TextInput
-                            label={"お名前（必須）"} multiline={false} rows={1}
-                            value={this.state.name} type={"txst"} onChange={this.inputName}
-                        />
-                        <TextInput
-                            label={"メールアドレス（必須）"} multiline={false} rows={1}
-                            value={this.state.email} type={"email"} onChange={this.inputEmail}
-                        />
-                        <TextInput
-                            label={"お問い合わせ内容（必須）"} multiline={true} rows={5}
-                            value={this.state.description} type={"text"} onChange={this.inputDescription}
-                        />
-                </DialogContentText>
+            <DialogContent id="alert-dialog-description">
+                <TextInput
+                    label={"お名前（必須）"} multiline={false} rows={1}
+                    value={name} type={"txst"} onChange={inputName}
+                />
+                <TextInput
+                    label={"メールアドレス（必須）"} multiline={false} rows={1}
+                    value={email} type={"email"} onChange={inputEmail}
+                />
+                <TextInput
+                    label={"お問い合わせ内容（必須）"} multiline={true} rows={5}
+                    value={description} type={"text"} onChange={inputDescription}
+                />
             </DialogContent>
             <DialogActions>
                 <Button onClick={this.props.handleClose}>キャンセル</Button>
